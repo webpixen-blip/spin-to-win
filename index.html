@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎰 SpinWin - ජය ගන්න!</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Noto+Sans+Sinhala:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #FFD700;
+    --gold2: #FFA500;
+    --dark: #0a0a1a;
+    --dark2: #12122a;
+    --purple: #7c3aed;
+    --pink: #ec4899;
+    --cyan: #06b6d4;
+    --green: #22c55e;
+    --red: #ef4444;
+    --white: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans Sinhala', 'Baloo 2', sans-serif;
+    background: var(--dark);
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Animated starfield */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 10%, rgba(255,215,0,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 50% 80%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 10% 90%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 60%, rgba(255,215,0,0.5) 0%, transparent 100%),
+      radial-gradient(2px 2px at 40% 50%, rgba(255,255,255,0.2) 0%, transparent 100%),
+      radial-gradient(600px 600px at 50% 50%, rgba(124,58,237,0.08) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+    animation: twinkle 4s infinite alternate;
+  }
+
+  @keyframes twinkle {
+    0% { opacity: 0.7; }
+    100% { opacity: 1; }
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px 16px 40px;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .header .badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--purple), var(--pink));
+    padding: 4px 16px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    animation: pulseBadge 2s infinite;
+  }
+
+  @keyframes pulseBadge {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(236,72,153,0.5); }
+    50% { box-shadow: 0 0 0 8px rgba(236,72,153,0); }
+  }
+
+  .header h1 {
+    font-size: clamp(28px, 8vw, 42px);
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--gold), var(--gold2), var(--pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+    text-shadow: none;
+    margin-bottom: 6px;
+  }
+
+  .header p {
+    color: rgba(255,255,255,0.65);
+    font-size: 14px;
+  }
+
+  /* Prize ticker */
+  .ticker-wrap {
+    overflow: hidden;
+    background: linear-gradient(90deg, rgba(255,215,0,0.1), rgba(255,165,0,0.15), rgba(255,215,0,0.1));
+    border: 1px solid rgba(255,215,0,0.3);
+    border-radius: 12px;
+    padding: 10px 0;
+    margin-bottom: 24px;
+  }
+
+  .ticker {
+    display: flex;
+    gap: 40px;
+    animation: tickerScroll 18s linear infinite;
+    white-space: nowrap;
+  }
+
+  @keyframes tickerScroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  .ticker-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gold);
+  }
+
+  /* Wheel section */
+  .wheel-section {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 28px;
+  }
+
+  /* Pointer/arrow */
+  .wheel-pointer {
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    width: 0;
+    height: 0;
+    border-left: 14px solid transparent;
+    border-right: 14px solid transparent;
+    border-top: 28px solid var(--gold);
+    filter: drop-shadow(0 0 8px var(--gold));
+  }
+
+  .wheel-outer {
+    position: relative;
+    padding: 10px;
+    border-radius: 50%;
+    background: conic-gradient(
+      var(--purple) 0deg 45deg,
+      var(--gold) 45deg 90deg,
+      var(--red) 90deg 135deg,
+      var(--cyan) 135deg 180deg,
+      var(--green) 180deg 225deg,
+      var(--pink) 225deg 270deg,
+      var(--gold2) 270deg 315deg,
+      var(--purple) 315deg 360deg
+    );
+    box-shadow:
+      0 0 0 4px rgba(255,215,0,0.4),
+      0 0 40px rgba(255,215,0,0.2),
+      0 0 80px rgba(124,58,237,0.3);
+    animation: outerGlow 3s infinite alternate;
+  }
+
+  @keyframes outerGlow {
+    0% { box-shadow: 0 0 0 4px rgba(255,215,0,0.4), 0 0 30px rgba(255,215,0,0.15), 0 0 60px rgba(124,58,237,0.2); }
+    100% { box-shadow: 0 0 0 4px rgba(255,215,0,0.7), 0 0 60px rgba(255,215,0,0.3), 0 0 100px rgba(236,72,153,0.3); }
+  }
+
+  canvas#wheelCanvas {
+    border-radius: 50%;
+    display: block;
+  }
+
+  /* Center button */
+  .center-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, #fff 0%, var(--gold) 40%, var(--gold2) 100%);
+    border: 4px solid rgba(255,255,255,0.8);
+    box-shadow: 0 0 20px rgba(255,215,0,0.8), inset 0 2px 4px rgba(255,255,255,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 5;
+    transition: transform 0.2s;
+  }
+
+  .center-btn:active { transform: translate(-50%, -50%) scale(0.92); }
+
+  /* Spin Button */
+  .spin-btn {
+    width: 100%;
+    max-width: 320px;
+    padding: 18px 32px;
+    font-size: 20px;
+    font-weight: 900;
+    font-family: 'Noto Sans Sinhala', sans-serif;
+    background: linear-gradient(135deg, #FFD700 0%, #FF8C00 50%, #FF4500 100%);
+    color: #1a0500;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(255,140,0,0.5), 0 0 0 0 rgba(255,140,0,0.3);
+    transition: all 0.3s;
+    margin-top: 20px;
+    animation: btnPulse 2.5s infinite;
+    letter-spacing: 1px;
+  }
+
+  @keyframes btnPulse {
+    0%, 100% { box-shadow: 0 8px 32px rgba(255,140,0,0.5), 0 0 0 0 rgba(255,140,0,0.3); }
+    50% { box-shadow: 0 8px 40px rgba(255,140,0,0.7), 0 0 0 12px rgba(255,140,0,0); }
+  }
+
+  .spin-btn::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -60%;
+    width: 40%;
+    height: 200%;
+    background: rgba(255,255,255,0.3);
+    transform: skewX(-20deg);
+    animation: btnShine 3s infinite;
+  }
+
+  @keyframes btnShine {
+    0% { left: -60%; }
+    100% { left: 160%; }
+  }
+
+  .spin-btn:hover {
+    transform: translateY(-3px) scale(1.02);
+  }
+
+  .spin-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    animation: none;
+    transform: none;
+  }
+
+  /* Prizes grid */
+  .prizes-section {
+    margin-bottom: 24px;
+  }
+
+  .section-title {
+    text-align: center;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--gold);
+    margin-bottom: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .prizes-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .prize-card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 14px 12px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+
+  .prize-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 0%, rgba(255,215,0,0.08), transparent 70%);
+    pointer-events: none;
+  }
+
+  .prize-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(255,215,0,0.3);
+  }
+
+  .prize-card .emoji {
+    font-size: 32px;
+    display: block;
+    margin-bottom: 6px;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+  }
+
+  .prize-card .name {
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.9);
+    line-height: 1.3;
+  }
+
+  .prize-card .value {
+    font-size: 11px;
+    color: var(--gold);
+    font-weight: 700;
+    margin-top: 3px;
+  }
+
+  /* Winner popup overlay */
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(6px);
+  }
+
+  .overlay.show { display: flex; }
+
+  .popup {
+    background: linear-gradient(160deg, #1a0a3a, #0d0d2b);
+    border: 2px solid var(--gold);
+    border-radius: 24px;
+    padding: 32px 24px;
+    text-align: center;
+    max-width: 340px;
+    width: 100%;
+    position: relative;
+    box-shadow: 0 0 60px rgba(255,215,0,0.3), 0 0 120px rgba(124,58,237,0.3);
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  @keyframes popIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .confetti {
+    position: absolute;
+    top: -10px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 24px;
+    animation: confettiFall 1s ease forwards;
+  }
+
+  @keyframes confettiFall {
+    0% { transform: translateY(-20px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+
+  .popup h2 {
+    font-size: 22px;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--gold), var(--gold2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 12px 0 6px;
+  }
+
+  .popup .prize-emoji-big {
+    font-size: 72px;
+    display: block;
+    margin: 10px 0;
+    animation: prizeFloat 2s infinite ease-in-out;
+  }
+
+  @keyframes prizeFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .popup .prize-name-big {
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--white);
+    margin-bottom: 6px;
+  }
+
+  .popup .claim-text {
+    font-size: 13px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+
+  .claim-btn {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--gold), var(--gold2));
+    color: #1a0500;
+    font-size: 17px;
+    font-weight: 900;
+    font-family: 'Noto Sans Sinhala', sans-serif;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 6px 24px rgba(255,165,0,0.5);
+    transition: transform 0.2s;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+  }
+
+  .claim-btn:hover { transform: translateY(-2px); }
+
+  .close-popup {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.5);
+    padding: 8px 24px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 13px;
+    font-family: 'Noto Sans Sinhala', sans-serif;
+    transition: all 0.2s;
+  }
+
+  .close-popup:hover { border-color: rgba(255,255,255,0.5); color: white; }
+
+  /* Spinning state overlay on wheel */
+  .spinning-label {
+    display: none;
+    position: absolute;
+    bottom: -36px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255,215,0,0.15);
+    border: 1px solid rgba(255,215,0,0.4);
+    padding: 4px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    color: var(--gold);
+    font-weight: 700;
+    white-space: nowrap;
+    animation: blink 0.8s infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    font-size: 11px;
+    color: rgba(255,255,255,0.25);
+    margin-top: 16px;
+    line-height: 1.7;
+  }
+
+  /* Floating particles */
+  .particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    animation: floatUp linear infinite;
+    opacity: 0;
+  }
+
+  @keyframes floatUp {
+    0% { transform: translateY(100vh) scale(0); opacity: 0; }
+    10% { opacity: 0.7; }
+    90% { opacity: 0.3; }
+    100% { transform: translateY(-20vh) scale(1.5); opacity: 0; }
+  }
+
+  /* Responsive */
+  @media (max-width: 360px) {
+    .header h1 { font-size: 26px; }
+    .prizes-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .prize-card { padding: 10px 8px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Floating particles -->
+<div class="particles" id="particles"></div>
+
+<!-- Winner Overlay -->
+<div class="overlay" id="overlay">
+  <div class="popup" id="popup">
+    <div class="confetti" id="confettiEmoji">🎉🎊🎉</div>
+    <h2>🏆 ජය ගත්තා!</h2>
+    <span class="prize-emoji-big" id="popupEmoji">🎁</span>
+    <div class="prize-name-big" id="popupName">ත්‍යාගය</div>
+    <p class="claim-text">
+      ඔබේ ත්‍යාගය ලබා ගැනීමට පහත බොත්තම ක්ලික් කරන්න.<br>
+      <strong style="color:var(--gold)">දැන්ම Claim කරන්න!</strong>
+    </p>
+    <a id="claimBtn" href="#" target="_blank" class="claim-btn">
+      🎁 දැන්ම ත්‍යාගය ලබා ගන්න!
+    </a>
+    <button class="close-popup" onclick="closePopup()">නැවත Spin කරන්න</button>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="badge">🔥 FREE SPIN</div>
+    <h1>SpinWin<br>ත්‍යාග දිනන්න!</h1>
+    <p>Spin කරන්න · ජය ගන්න · ත්‍යාගය Claim කරන්න</p>
+  </div>
+
+  <!-- Ticker -->
+  <div class="ticker-wrap">
+    <div class="ticker" id="ticker">
+      <span class="ticker-item">📱 iPhone 17 Pro Max</span>
+      <span class="ticker-item">💵 $20 Cash Prize</span>
+      <span class="ticker-item">⌚ Apple Watch</span>
+      <span class="ticker-item">🚁 DJI Drone</span>
+      <span class="ticker-item">📷 OSMO Pocket Camera</span>
+      <span class="ticker-item">🎁 Special Bonus</span>
+      <span class="ticker-item">📱 iPhone 17 Pro Max</span>
+      <span class="ticker-item">💵 $20 Cash Prize</span>
+      <span class="ticker-item">⌚ Apple Watch</span>
+      <span class="ticker-item">🚁 DJI Drone</span>
+      <span class="ticker-item">📷 OSMO Pocket Camera</span>
+      <span class="ticker-item">🎁 Special Bonus</span>
+    </div>
+  </div>
+
+  <!-- Wheel -->
+  <div class="wheel-section">
+    <div class="wheel-pointer"></div>
+    <div class="wheel-outer" id="wheelOuter">
+      <canvas id="wheelCanvas" width="280" height="280"></canvas>
+      <button class="center-btn" onclick="spinWheel()">🎰</button>
+    </div>
+    <div class="spinning-label" id="spinLabel">⚡ Spinning...</div>
+  </div>
+
+  <!-- Spin Button -->
+  <div style="text-align:center">
+    <button class="spin-btn" id="spinBtn" onclick="spinWheel()">
+      🎰 දැන්ම Spin කරන්න!
+    </button>
+  </div>
+
+  <!-- Prizes -->
+  <div class="prizes-section" style="margin-top:36px">
+    <div class="section-title">🏆 ත්‍යාග ලැයිස්තුව</div>
+    <div class="prizes-grid">
+      <div class="prize-card">
+        <span class="emoji">📱</span>
+        <div class="name">iPhone 17 Pro Max</div>
+        <div class="value">Worth ~$1,199</div>
+      </div>
+      <div class="prize-card">
+        <span class="emoji">💵</span>
+        <div class="name">$20 Cash Prize</div>
+        <div class="value">Direct Transfer</div>
+      </div>
+      <div class="prize-card">
+        <span class="emoji">⌚</span>
+        <div class="name">Apple Watch Smart</div>
+        <div class="value">Worth ~$399</div>
+      </div>
+      <div class="prize-card">
+        <span class="emoji">🚁</span>
+        <div class="name">DJI Drone</div>
+        <div class="value">Worth ~$299</div>
+      </div>
+      <div class="prize-card">
+        <span class="emoji">📷</span>
+        <div class="name">OSMO Pocket Camera</div>
+        <div class="value">Worth ~$349</div>
+      </div>
+      <div class="prize-card">
+        <span class="emoji">🎁</span>
+        <div class="name">Special Bonus Gift</div>
+        <div class="value">Surprise!</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    ⚡ Free to play · ත්‍යාග සීමිතයි<br>
+    Powered by SpinWin &copy; 2025
+  </div>
+
+</div>
+
+<script>
+// ========== CONFIG ==========
+// ඔබේ Monetag Direct Link URL එකෙන් replace කරන්න:
+const MONETAG_URL = "https://yourdirectlink.com/REPLACE_WITH_YOUR_MONETAG_LINK";
+
+const prizes = [
+  { name: "iPhone 17 Pro Max",   emoji: "📱", color: "#7c3aed" },
+  { name: "$20 Cash Prize",      emoji: "💵", color: "#FFD700" },
+  { name: "Apple Watch",         emoji: "⌚", color: "#ef4444" },
+  { name: "DJI Drone",           emoji: "🚁", color: "#06b6d4" },
+  { name: "OSMO Pocket Camera",  emoji: "📷", color: "#22c55e" },
+  { name: "Special Bonus",       emoji: "🎁", color: "#ec4899" },
+  { name: "$20 Cash Prize",      emoji: "💵", color: "#FFA500" },
+  { name: "Try Again!",          emoji: "🔄", color: "#6b7280" },
+];
+
+// ========== WHEEL DRAW ==========
+const canvas = document.getElementById('wheelCanvas');
+const ctx = canvas.getContext('2d');
+const numSegments = prizes.length;
+const arc = (2 * Math.PI) / numSegments;
+let currentAngle = 0;
+let isSpinning = false;
+
+function drawWheel(angle) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const cx = canvas.width / 2;
+  const cy = canvas.height / 2;
+  const r = cx - 6;
+
+  for (let i = 0; i < numSegments; i++) {
+    const start = angle + i * arc;
+    const end = start + arc;
+
+    // Segment
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, start, end);
+    ctx.closePath();
+    ctx.fillStyle = prizes[i].color;
+    ctx.fill();
+
+    // Border
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Emoji
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(start + arc / 2);
+    ctx.textAlign = 'right';
+    ctx.font = `${Math.min(22, r * 0.18)}px Arial`;
+    ctx.fillText(prizes[i].emoji, r - 12, 6);
+    ctx.restore();
+
+    // Text
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(start + arc / 2);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    ctx.font = `bold ${Math.min(10, r * 0.085)}px 'Baloo 2', sans-serif`;
+    const shortName = prizes[i].name.length > 12 ? prizes[i].name.slice(0, 11) + '…' : prizes[i].name;
+    ctx.fillText(shortName, r - 38, 6);
+    ctx.restore();
+  }
+
+  // Center circle
+  ctx.beginPath();
+  ctx.arc(cx, cy, 32, 0, 2 * Math.PI);
+  const grad = ctx.createRadialGradient(cx - 8, cy - 8, 2, cx, cy, 32);
+  grad.addColorStop(0, '#fff');
+  grad.addColorStop(0.4, '#FFD700');
+  grad.addColorStop(1, '#FF8C00');
+  ctx.fillStyle = grad;
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+}
+
+drawWheel(0);
+
+// ========== SPIN LOGIC ==========
+function spinWheel() {
+  if (isSpinning) return;
+  isSpinning = true;
+
+  const spinBtn = document.getElementById('spinBtn');
+  const spinLabel = document.getElementById('spinLabel');
+  spinBtn.disabled = true;
+  spinLabel.style.display = 'block';
+
+  // Pick winner (bias toward prizes, rarely "Try Again")
+  const winnerIdx = Math.random() < 0.15 ? 7 : Math.floor(Math.random() * 7);
+
+  // Calculate final angle
+  const spins = 5 + Math.floor(Math.random() * 4); // 5-8 full rotations
+  const segmentAngle = (2 * Math.PI) / numSegments;
+  // We want winner at top (pointer at -π/2), accounting for current angle
+  const targetAngle = (2 * Math.PI * spins) + (2 * Math.PI - winnerIdx * segmentAngle - segmentAngle / 2) - Math.PI / 2;
+
+  const startAngle = currentAngle;
+  const startTime = performance.now();
+  const duration = 4500 + Math.random() * 1500; // 4.5–6s
+
+  function easeOut(t) {
+    return 1 - Math.pow(1 - t, 4);
+  }
+
+  function animate(now) {
+    const elapsed = now - startTime;
+    const t = Math.min(elapsed / duration, 1);
+    const easedT = easeOut(t);
+    currentAngle = startAngle + targetAngle * easedT;
+    drawWheel(currentAngle);
+
+    if (t < 1) {
+      requestAnimationFrame(animate);
+    } else {
+      currentAngle = startAngle + targetAngle;
+      isSpinning = false;
+      spinBtn.disabled = false;
+      spinLabel.style.display = 'none';
+      showWinner(winnerIdx);
+    }
+  }
+
+  requestAnimationFrame(animate);
+}
+
+// ========== WINNER POPUP ==========
+function showWinner(idx) {
+  const prize = prizes[idx];
+  document.getElementById('popupEmoji').textContent = prize.emoji;
+  document.getElementById('popupName').textContent = prize.name;
+
+  const claimBtn = document.getElementById('claimBtn');
+
+  if (prize.name === "Try Again!") {
+    document.querySelector('.popup h2').textContent = '😔 කණගාටුයි!';
+    document.getElementById('confettiEmoji').textContent = '😢💔😢';
+    claimBtn.textContent = '🔄 නැවත Spin කරන්න';
+    claimBtn.onclick = function(e) {
+      e.preventDefault();
+      closePopup();
+    };
+  } else {
+    document.querySelector('.popup h2').textContent = '🏆 ජය ගත්තා!';
+    document.getElementById('confettiEmoji').textContent = '🎉🎊🎉';
+    claimBtn.textContent = '🎁 දැන්ම ත්‍යාගය ලබා ගන්න!';
+    claimBtn.onclick = function(e) {
+      e.preventDefault();
+      window.open(MONETAG_URL, '_blank');
+    };
+  }
+
+  document.getElementById('overlay').classList.add('show');
+}
+
+function closePopup() {
+  document.getElementById('overlay').classList.remove('show');
+}
+
+// Close on overlay click
+document.getElementById('overlay').addEventListener('click', function(e) {
+  if (e.target === this) closePopup();
+});
+
+// ========== PARTICLES ==========
+const colors = ['#FFD700','#ec4899','#7c3aed','#06b6d4','#22c55e','#FFA500'];
+const container = document.getElementById('particles');
+
+for (let i = 0; i < 18; i++) {
+  const p = document.createElement('div');
+  p.className = 'particle';
+  p.style.left = Math.random() * 100 + 'vw';
+  p.style.bottom = '0';
+  p.style.background = colors[Math.floor(Math.random() * colors.length)];
+  p.style.width = (Math.random() * 4 + 2) + 'px';
+  p.style.height = p.style.width;
+  p.style.animationDuration = (Math.random() * 12 + 8) + 's';
+  p.style.animationDelay = (Math.random() * 8) + 's';
+  container.appendChild(p);
+}
+</script>
+</body>
+</html>
